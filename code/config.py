@@ -17,5 +17,12 @@ config_arcface = {
     }
 
 config_BERT = {
+    'model' : {'name': 'cahya/bert-base-indonesian-522M',
+               'MAX_LEN': 256,
+               'num_classes':11014,
+               'scale' : 50,
+               'margin' : 0.4},
+    'training' : {'batch_size' : 16,
+            }
     
 }

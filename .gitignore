@@ -1,0 +1,3 @@
+data/image
+model_checkpoint/image_encoder/
+model_checkpoint/text_encoder/
