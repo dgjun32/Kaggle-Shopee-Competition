@@ -14,23 +14,24 @@ def label_mapper(train):
     train['label_group'] = train['label_group'].map(label_mapper)
     return train
 
-class ShopeeDataset(torch.utils.data.Dataset):
-    def __init__(self, df, cfg, transforms, mode):
+class ShopeeImageDataset(torch.utils.data.Dataset):
+    def __init__(self, df, cfg, transforms, mode = 'train'):
         self.df = df
+        self.df['label_group'] = self.df['label_group'].astype(float)
         self.cfg = cfg
         self.transforms = transforms
         self.mode = mode
     def __len__(self):
         return len(self.df)
     def __getitem__(self, index):
-        image_path = os.path.join(cfg['path']['image_dir'], self.df['image'][index])
+        image_path = os.path.join(self.cfg['path']['image_dir'], self.df['image'][index])
         img = Image.open(image_path)
-        img = self.transforms(img).float()
-        if mode == 'test':
-            return img
+        img = self.transforms(img)
+        if self.mode == 'test':
+            return img.float()
         else:
-            label = self.df['label_group'][index]
-            return img, label
+            label = torch.tensor(self.df['label_group'][index]).long()
+            return img.float(), label
 
 def build_transforms(cfg):
     transform = transforms.Compose([
