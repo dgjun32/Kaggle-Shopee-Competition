@@ -17,7 +17,6 @@ def label_mapper(train):
 class ShopeeImageDataset(torch.utils.data.Dataset):
     def __init__(self, df, cfg, transforms, mode = 'train'):
         self.df = df
-        self.df['label_group'] = self.df['label_group'].astype(float)
         self.cfg = cfg
         self.transforms = transforms
         self.mode = mode
@@ -27,9 +26,11 @@ class ShopeeImageDataset(torch.utils.data.Dataset):
         image_path = os.path.join(self.cfg['path']['image_dir'], self.df['image'][index])
         img = Image.open(image_path)
         img = self.transforms(img)
+        # if test mode, return only image
         if self.mode == 'test':
             return img.float()
         else:
+        # else train mode, return image and label for arcface training
             label = torch.tensor(self.df['label_group'][index]).long()
             return img.float(), label
 

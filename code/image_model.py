@@ -84,23 +84,26 @@ class VIT_MODEL(pl.LightningModule):
         return out, label, loss
     
     def training_step(self, batch, batch_idx):
-        pred, target, loss = self._step(batch)
+        pred, label, loss = self._step(batch)
         tensorboard_log = {'train_loss':loss}
-        return {'loss':loss, 'rmse':metric, 'log':tensorboard_log}
+        return {'loss':loss, 'log':tensorboard_log}
     
     def validation_step(self, batch, batch_idx):
         with torch.no_grad():
-            pred, target, loss = self._step(batch)
-            pred = torch.argmax(pred, axis = 1)
+            pred, label, loss = self._step(batch)
+            pred = torch.argmax(pred, axis = 1).reshape(batch[0].shape[0],)
+            label = label.reshape(batch[0].shape[0],)
         return {'val_pred': pred, 'val_label': label, 'val_loss':loss}
     
     def validation_epoch_end(self, outputs):
-        avg_loss = torch.cat([x['val_loss'] for x in outputs]).mean()
+        avg_loss = torch.stack([x['val_loss'] for x in outputs]).mean()
         pred = torch.cat([x['val_pred'] for x in outputs])
         label = torch.cat([x['val_label'] for x in outputs])
+        pred.to('cpu')
+        label.to('cpu')
         acc = (pred == label).sum() / len(pred)
         print(f"Epoch {self.current_epoch} avg_loss:{avg_loss} acc:{acc}")
-        self.log({'val_loss': avg_loss, 'val_acc':acc})
+        self.log('val_loss', avg_loss)
         tensorboard_logs = {'val_loss': avg_loss, 'val_acc': acc}
         return {'val_loss': avg_loss,
                 'val_acc': acc,

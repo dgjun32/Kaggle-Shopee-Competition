@@ -1,5 +1,5 @@
 CFG_VIT = {
-    'model' : {'name': 'transformers.ViTForClassification',
+    'model' : {'name': 'transformers.ViTForImageClassification',
                'weight': 'google/vit-base-patch16-224',
                'img_size' : 224,
                'num_classes' : 11014,
@@ -7,13 +7,10 @@ CFG_VIT = {
                'margin' : 0.4},
     'training' : {'batch_size':64,
                   'epochs' : 10,
-                  'lr_schedule':{'name':'torch.optim.CosineAnnealingLR',
-                                 'learning_rate':2e-5,
-                                 'first_decay_steps':500, 
-                                 't_mul':2.0, 
-                                 'm_mul':1.0,
-                                 'alpha':0.0}
-                },
+                  'optim' : 'torch.optim.Adam',
+                  'lr_schedule':{'name':'torch.optim.lr_scheduler.CosineAnnealingLR',
+                                 'learning_rate':2e-5}
+                                },
     'path' : {'output' : '../model_checkpoint/image_encoder/',
               'df' : '../data/',
               'image_dir' : '../data/train_imgs/'}
