@@ -3,123 +3,80 @@ import numpy as np
 import pandas as pd
 import os
 import sys
-import sklearn
-import tensorflow as tf
-from tensorflow import keras
 import math
 
 #modeling
-from tensorflow.keras import backend as K
-from tensorflow.keras.models import Model
-from tensorflow.keras.layers import *
-import tensorflow_addons as tfa
-from sklearn.model_selection import train_test_split
+import torch.nn as nn
 
 #image preprocessing and input pipeline
-from keras.preprocessing.image import ImageDataGenerator, img_to_array, load_img
 from PIL import Image
-import cv2
-from tensorflow.keras.preprocessing.image import ImageDataGenerator
 
 #warnings
 import warnings
 
-# arcface layer implementation
-def _resolve_training(layer, training):
-    if training is None:
-        training = K.learning_phase()
-    if isinstance(training, int):
-        training = bool(training)
-    if not layer.trainable:
-        # When the layer is not trainable, override the value
-        training = False
-    return training
+# ArcFace Module
+class ArcMarginProduct(nn.Module):
+    def __init__(self, in_feature=128, out_feature=10575, s=32.0, m=0.50, easy_margin=False):
+        super(ArcMarginProduct, self).__init__()
+        self.in_feature = in_feature
+        self.out_feature = out_feature
+        self.s = s
+        self.m = m
+        self.weight = Parameter(torch.Tensor(out_feature, in_feature))
+        nn.init.xavier_uniform_(self.weight)
 
-class ArcFace(tf.keras.layers.Layer):
-    """
-    Implementation of ArcFace layer. Reference: https://arxiv.org/abs/1801.07698
-    
-    Arguments:
-      num_classes: number of classes to classify
-      s: scale factor
-      m: margin
-      regularizer: weights regularizer
-    """
-    def __init__(self,
-                 num_classes,
-                 s=30.0,
-                 m=0.5,
-                 regularizer=None,
-                 name='arcface',
-                 **kwargs):
-        
-        super().__init__(name=name, **kwargs)
-        self._n_classes = num_classes
-        self._s = float(s)
-        self._m = float(m)
-        self._regularizer = regularizer
+        self.easy_margin = easy_margin
+        self.cos_m = math.cos(m)
+        self.sin_m = math.sin(m)
 
-    def build(self, input_shapes):
-        embedding_shape, label_shape = input_shapes
-        self._w = self.add_weight(shape=(embedding_shape[-1], self._n_classes),
-                                  initializer='glorot_uniform',
-                                  trainable=True,
-                                  regularizer=self._regularizer,
-                                  name='cosine_weights')
-    def call(self, inputs, training=None):
-        """
-        During training, requires 2 inputs: embedding (after backbone+pool+dense),
-        and ground truth labels. The labels should be sparse (and use
-        sparse_categorical_crossentropy as loss).
-        """
-        embedding, label = inputs
+        # make the function cos(theta+m) monotonic decreasing while theta in [0°,180°]
+        self.th = math.cos(math.pi - m)
+        self.mm = math.sin(math.pi - m) * m
 
-        # Squeezing is necessary for Keras. It expands the dimension to (n, 1)
-        label = tf.reshape(label, [-1], name='label_shape_correction')
+    def forward(self, x, label):
+        # cos(theta)
+        cosine = F.linear(F.normalize(x), F.normalize(self.weight))
+        # cos(theta + m)
+        sine = torch.sqrt(1.0 - torch.pow(cosine, 2))
+        phi = cosine * self.cos_m - sine * self.sin_m
 
-        # Normalize features and weights and compute dot product
-        x = tf.nn.l2_normalize(embedding, axis=1, name='normalize_prelogits')
-        w = tf.nn.l2_normalize(self._w, axis=0, name='normalize_weights')
-        cosine_sim = tf.matmul(x, w, name='cosine_similarity')
-
-        training = _resolve_training(self, training)
-        if not training:
-            # We don't have labels if we're not in training mode
-            return self._s * cosine_sim
+        if self.easy_margin:
+            phi = torch.where(cosine > 0, phi, cosine)
         else:
-            one_hot_labels = tf.one_hot(label,
-                                        depth=self._n_classes,
-                                        name='one_hot_labels')
-            theta = tf.math.acos(K.clip(
-                    cosine_sim, -1.0 + K.epsilon(), 1.0 - K.epsilon()))
-            selected_labels = tf.where(tf.greater(theta, math.pi - self._m),
-                                       tf.zeros_like(one_hot_labels),
-                                       one_hot_labels,
-                                       name='selected_labels')
-            final_theta = tf.where(tf.cast(selected_labels, dtype=tf.bool),
-                                   theta + self._m,
-                                   theta,
-                                   name='final_theta')
-            output = tf.math.cos(final_theta, name='cosine_sim_with_margin')
-            return self._s * output
+            phi = torch.where((cosine - self.th) > 0, phi, cosine - self.mm)
+        
+        one_hot = torch.zeros_like(cosine)
+        one_hot.scatter_(1, label.view(-1, 1), 1)
+        output = (one_hot * phi) + ((1.0 - one_hot) * cosine)
+        output = output * self.s
 
-# Image Encoder with EfficientNetB3 backbone
-class ImageEncoder(Layer):
-    def __init__(self, input_shape, num_classes, scale, margin):
-        super(ImageEncoder, self).__init__()
-        self.base_model = keras.applications.EfficientNetB3(include_top = False, weights = 'imagenet', input_shape = input_shape)
-        for layer in self.base_model.layers:
-            layer.trainable = False
-        self.gap = GlobalAveragePooling2D()
-        self.batchnorm = BatchNormalization()
-        self.l2norm = Lambda(lambda x: K.l2_normalize(x,axis=1))
-        self.arcface = ArcFace(num_classes = num_classes, s = scale, m = margin)
-        self.softmax = Activation('softmax') 
-    def call(self, input_image, input_label):
-        x = self.base_model(input_image)
-        x = self.gap(x)
-        x = self.batchnorm(x)
-        x = self.l2norm(x)
-        x = self.arcface([x, input_label])
-        output = self.softmax(x)
         return output
+
+class Identity(nn.Module):
+    def __init__(self):
+        super().__init__()
+    def forward(x):
+        return x
+
+# Vision Transformer based feature extractor
+class VIT_MODEL(nn.Module):
+    def __init__(self, cfg):
+        super().__init__()
+        self.cfg = cfg
+        self.backbone = eval(cfg['model']['name']).from_pretrained(cfg['model']['weight'])
+        # freezing backbone weight
+        for param in self.backbone.parameters():
+            param.requires_grad = False
+        self.backbone.classifier = Identity()
+        self.arcface = ArcMarginProduct(in_feature = 768,
+                                           out_feature = cfg['model']['num_classes'],
+                                           s = cfg['model']['scale']
+                                           m = cfg['model']['margin'])
+    def forward(self, input, label = None):
+        x = self.backbone(input)
+        x = nn.functional.normalize(x)
+        if label is not None:
+            arcmargin = self.arcface(input, label)
+            return arcmargin
+        else:
+            return x
