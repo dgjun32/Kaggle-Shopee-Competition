@@ -12,17 +12,19 @@ CFG_VIT = {
                                  'learning_rate':2e-5}
                                 },
     'path' : {'output' : '../model_checkpoint/image_encoder/',
-              'df' : '../data/',
+              'df' : '../data/train.csv',
               'image_dir' : '../data/train_imgs/'}
     }
 
-config_BERT = {
-    'model' : {'name': 'cahya/bert-base-indonesian-522M',
+CFG_BERT = {
+    'model' : {'name': 'transformers.',
+               'weight': 'cahya/bert-base-indonesian-522M',
                'MAX_LEN': 256,
                'num_classes':11014,
                'scale' : 50,
                'margin' : 0.4},
-    'training' : {'batch_size' : 16,
-            }
-    
-}
+    'training' : {'batch_size' : 16
+                },
+    'path' : {'output': '../model_checkpoint/text_encoder/',
+              'df' : '../data/train.csv'}
+    }

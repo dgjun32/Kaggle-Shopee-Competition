@@ -13,7 +13,8 @@ SEED = 42
 np.random.seed(SEED)
 
 from config import CFG_VIT
-from image_dataset import label_mapper, ShopeeImageDataset, build_transforms
+from utils import label_mapper
+from image_dataset import ShopeeImageDataset, build_transforms
 from image_model import VIT_MODEL
 
 import sklearn
