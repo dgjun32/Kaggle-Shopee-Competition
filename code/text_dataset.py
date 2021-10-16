@@ -1,6 +1,6 @@
 
 class ShopeeTextDataset(torch.utils.data.Dataset):
-    def __init__(self, df, cfg, transforms, tokenizer, mode = 'train'):
+    def __init__(self, df, cfg, tokenizer, mode = 'train'):
         self.df = df
         self.cfg = cfg
         self.tokenizer = tokenizer
