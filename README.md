@@ -11,10 +11,10 @@ I finetuned those backbones using ArcFace loss, which can enhance <b>intra-class
 
 ## 2. Data
 you can download dataframe and images to ```../data/``` directory.
-```
+<pre><code> 
 cd ../data
-gdown <sharing link>
-```
+gdown "sharing link url"
+</code></pre>
 ## 3. Training
 To train image encoder, command ```python image_main.py```
 To train text encoder, command ```python text_main.py```
@@ -25,4 +25,3 @@ Trained models will be saved as checkpoint file at ```../model_checkpoint/image_
 
 
 ## 5. Evaluation
-
