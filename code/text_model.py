@@ -3,7 +3,6 @@ import torch
 import torch.nn as nn
 from transformers import BertTokenizer, BertModel
 
-# ArcFace Module
 class ArcMarginProduct(nn.Module):
     def __init__(self, in_feature=128, out_feature=10575, s=32.0, m=0.50, easy_margin=False):
         super(ArcMarginProduct, self).__init__()
@@ -40,12 +39,12 @@ class ArcMarginProduct(nn.Module):
         outputs = outputs * self.s
         return outputs
 
-# Indonesian PretrainedBert + ArcFace
 class IND_BERT(pl.LightningModule):
     def __init__(self, cfg):
         super().__init__()
         self.cfg = cfg
         backbone = eval(cfg['model']['name']).from_pretrained(cfg['model']['weight'])
+        self.tokenizer = transformers.BertTokenizer.from_pretrained(cfg['model']['weight'])
         self.embeddings = backbone.embeddings
         self.encoder = backbone.encoder
         self.linear = backbone.pooler.dense
@@ -61,8 +60,12 @@ class IND_BERT(pl.LightningModule):
         self.criterion = nn.CrossEntropyLoss()
     
     def forward(self, input, label = None):
-        x = self.embeddings(input['input_ids'], input['token_type_ids'])
-        x = self.encoder(x, input['attention_mask'])
+        # tokenization
+        input = self.tokenizer.batch_encode_plus(input, max_length = self.cfg['model']['max_length'],
+                                                 padding = 'max_length', truncation = True)
+        # forward propagation
+        x = self.embeddings(torch.tensor(input['input_ids']).cuda(), torch.tensor(input['token_type_ids']).cuda())
+        x = self.encoder(x)
         x = x['last_hidden_state'][:,0,:]
         x = self.linear(x)
         x = nn.functional.normalize(x)
@@ -73,8 +76,8 @@ class IND_BERT(pl.LightningModule):
             return x
 
     def _step(self, batch):
-        tokens, label = batch
-        out = self.forward(input = tokens, label = label)
+        text, label = batch
+        out = self.forward(input = text, label = label)
         loss = self.criterion(out, label)
         return out, label, loss
     
@@ -86,8 +89,8 @@ class IND_BERT(pl.LightningModule):
     def validation_step(self, batch, batch_idx):
         with torch.no_grad():
             pred, label, loss = self._step(batch)
-            pred = torch.argmax(pred, axis = 1).reshape(batch[0].shape[0],)
-            label = label.reshape(batch[0].shape[0],)
+            pred = torch.argmax(pred, axis = 1).reshape(pred.shape[0],)
+            label = label.reshape(pred.shape[0],)
         return {'val_pred': pred, 'val_label': label, 'val_loss':loss}
     
     def validation_epoch_end(self, outputs):
