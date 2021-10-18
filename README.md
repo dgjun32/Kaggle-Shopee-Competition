@@ -1,9 +1,9 @@
 ## 1. Methodology
 I applied two-step approach for <b>Product Matching</b> task. 
     
-    1. Image, Text encoder for transforming Image and text into representation vector.
+1. Transforming Image and text into representation vectors using fine-tuned encoder model.
     
-    2. ML algorithm for grouping items, given image vector and text vector of each item.
+2. ML algorithm(K-NN) for grouping items, given image vector and text vector of each item.
 
 ### 1.1. Backbone
 As an Image encoder, I finetuned pretrained <b>Visual Transformer</b> ```ViT-B/16``` by adding only one linear layer on top of the backbone. 
