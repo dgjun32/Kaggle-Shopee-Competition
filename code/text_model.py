@@ -65,7 +65,7 @@ class IND_BERT(pl.LightningModule):
                                                  padding = 'max_length', truncation = True)
         # forward propagation
         x = self.embeddings(torch.tensor(input['input_ids']).cuda(), torch.tensor(input['token_type_ids']).cuda())
-        x = self.encoder(x)
+        x = self.encoder(x, encoder_attention_mask = torch.tensor(input['attention_mask']).cuda())
         x = x['last_hidden_state'][:,0,:]
         x = self.linear(x)
         x = nn.functional.normalize(x)
