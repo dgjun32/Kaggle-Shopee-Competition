@@ -23,7 +23,11 @@ CFG_BERT = {
                'num_classes':11014,
                'scale' : 50,
                'margin' : 0.4},
-    'training' : {'batch_size' : 16
+    'training' : {'batch_size' : 32,
+                  'epochs':50,
+                  'optim' : 'torch.optim.Adam',
+                  'lr_schedule':{'name':'torch.optim.lr_scheduler.CosineAnnealingLR',
+                                 'learning_rate':2e-3}
                 },
     'path' : {'output': '../model_checkpoint/text_encoder/',
               'df' : '../data/train.csv'}
