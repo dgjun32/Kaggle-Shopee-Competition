@@ -1,5 +1,5 @@
 from utils import label_mapper
-from text_dataset import ShopeeTextDataset
+from datasets import ShopeeTextDataset
 from image_model import IND_BERT
 from config import CFG_BERT
 

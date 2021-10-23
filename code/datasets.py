@@ -35,3 +35,33 @@ def build_transforms(cfg):
     ])
     return transform
 
+class ShopeeTextDataset(torch.utils.data.Dataset):
+    def __init__(self, df, cfg, mode = 'train'):
+        self.df = df
+        self.cfg = cfg
+        self.mode = mode
+    def __len__(self):
+        return len(self.df)
+    def __getitem__(self, index):
+        text = self.df['title'][index]
+        if self.mode == 'test':
+            return text
+        else:
+            label = torch.tensor(self.df['label_group'][index]).long()
+            return text, label
+
+class ShopeeDataset(torch.utils.data.Dataset):
+    def __init__(self, df, cfg, transforms):
+        self.df = df
+        self.cfg = cfg
+        self.transforms = transforms
+        self.mode = mode
+    def __len__(self):
+        return len(self.df)
+    def __getitem__(self, index):
+        image_path = os.path.join(self.cfg['path']['image_dir'], self.df['image'][index])
+        img = Image.open(image_path)
+        img = self.transforms(img)
+        text = self.df['title'][index]
+        
+        return img.float(), text

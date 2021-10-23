@@ -4,7 +4,7 @@ CFG_VIT = {
                'img_size' : 224,
                'num_classes' : 11014,
                'scale' : 50,
-               'margin' : 0.4},
+               'margin' : 0.9},
     'training' : {'batch_size':64,
                   'epochs' : 10,
                   'optim' : 'torch.optim.Adam',
@@ -17,18 +17,19 @@ CFG_VIT = {
     }
 
 CFG_BERT = {
-    'model' : {'name': 'transformers.',
+    'model' : {'name': 'transformers.BertModel',
                'weight': 'cahya/bert-base-indonesian-522M',
-               'MAX_LEN': 256,
+               'max_length': 256,
                'num_classes':11014,
                'scale' : 50,
-               'margin' : 0.4},
+               'margin' : 0.7},
     'training' : {'batch_size' : 32,
-                  'epochs':50,
+                  'epochs':100,
                   'optim' : 'torch.optim.Adam',
                   'lr_schedule':{'name':'torch.optim.lr_scheduler.CosineAnnealingLR',
-                                 'learning_rate':2e-3}
-                },
+                                 'backbone_lr':1e-5,
+                                 'arcface_lr':5e-3}
+                  },
     'path' : {'output': '../model_checkpoint/text_encoder/',
               'df' : '../data/train.csv'}
     }

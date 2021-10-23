@@ -4,7 +4,7 @@ import torch.nn as nn
 from transformers import BertTokenizer, BertModel
 
 class ArcMarginProduct(nn.Module):
-    def __init__(self, in_feature=128, out_feature=10575, s=32.0, m=0.50, easy_margin=False):
+    def __init__(self, in_feature, out_feature, s, m, easy_margin=False):
         super(ArcMarginProduct, self).__init__()
         self.in_feature = in_feature
         self.out_feature = out_feature
@@ -92,24 +92,3 @@ class IND_BERT(pl.LightningModule):
             pred = torch.argmax(pred, axis = 1).reshape(pred.shape[0],)
             label = label.reshape(pred.shape[0],)
         return {'val_pred': pred, 'val_label': label, 'val_loss':loss}
-    
-    def validation_epoch_end(self, outputs):
-        avg_loss = torch.stack([x['val_loss'] for x in outputs]).mean()
-        pred = torch.cat([x['val_pred'] for x in outputs])
-        label = torch.cat([x['val_label'] for x in outputs])
-        pred.to('cpu')
-        label.to('cpu')
-        acc = (pred == label).sum() / len(pred)
-        print(f"Epoch {self.current_epoch} avg_loss:{avg_loss} acc:{acc}")
-        self.log('val_loss', avg_loss)
-        tensorboard_logs = {'val_loss': avg_loss, 'val_acc': acc}
-        return {'val_loss': avg_loss,
-                'val_acc': acc,
-                'log': tensorboard_logs}
-            
-    def configure_optimizers(self):
-        optimizer = eval(self.cfg['training']['optim'])(self.parameters(),
-                                                        lr = self.cfg['training']['lr_schedule']['learning_rate'])
-        schedule = eval(self.cfg['training']['lr_schedule']['name'])(optimizer = optimizer,
-                                                                     T_max = self.cfg['training']['epochs'])
-        return [optimizer], [schedule]

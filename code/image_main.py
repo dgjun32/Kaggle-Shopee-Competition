@@ -14,7 +14,7 @@ np.random.seed(SEED)
 
 from config import CFG_VIT
 from utils import label_mapper
-from image_dataset import ShopeeImageDataset, build_transforms
+from datasets import ShopeeImageDataset, build_transforms
 from image_model import VIT_MODEL
 
 import sklearn
