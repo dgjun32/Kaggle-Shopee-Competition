@@ -6,11 +6,11 @@ I applied two-step approach for <b>Product Matching</b> task.
 
 ### 1.1. Backbone
 * As an Image encoder, pretrained <b>Visual Transformer</b> ```ViT-B/16``` as a backbone.
-* As an Text encoder, pretrained <b>Indonesian BERT</b> as a backbone.
+* As an Text encoder, pretrained <b>```Indonesian BERT```</b> as a backbone.
 
 ### 1.2. Learning Metric
-<p>I finetuned those backbones using ```ArcFace loss```, which enhances <b>intra-class compactness</b> and <b>inter-class discrepancy</b> of embedding vectors. <br> Encoder architectures are trained with 60% of the data, with larger learning rate for parameters of Cosine head.</p>
-<p></p>
+<p>I finetuned those backbones using ArcFaceloss, which enhances <b>intra-class compactness</b> and <b>inter-class discrepancy</b> of embedding vectors. <br> Encoder architectures are trained with 60% of the data, with larger learning rate for parameters of cosine head.</p>
+<p>After finetuning backbones, I concatenated image embedding and text embedding which are l2-normalized. An then, I found optimal threshold value for matching same product based on concatenated embedding vectors.</p>
 
 
 
