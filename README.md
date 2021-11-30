@@ -1,17 +1,28 @@
+# Shopee Product Matching Algorithm
+
+## 0. What is Product Matching?
+Task of product matching is to <b>bind same product together</b>, given data(img, text) of each product.
+
+Current E-commerce company requires product matching algorithm to enhance user experience.(ex.Recommendation system based on product matching)
+
+Final task of this competition is to predict id of same product for each items, thereby maximizing f1-score.
+
 ## 1. Methodology
 I applied two-step approach for <b>Product Matching</b> task. 
     
 1. Transforming Image and text into representation vectors using fine-tuned encoder model.
-2. NearestNeighbors algorithm for matching items, given concatenated *image vector* and *text vector* of each item.
+2. Distance based algorithm for matching items, given concatenated *image vector* and *text vector* of each item.
 
 ### 1.1. Backbone
 * As an Image encoder, pretrained <b>Visual Transformer</b> ```ViT-B/16``` as a backbone.
 * As an Text encoder, pretrained <b>```Indonesian BERT```</b> as a backbone.
 
 ### 1.2. Learning Metric
-<p>I finetuned those backbones using ArcFaceloss, which enhances <b>intra-class compactness</b> and <b>inter-class discrepancy</b> of embedding vectors. <br> Encoder architectures are trained with 60% of the data, with larger learning rate for parameters of cosine head.</p>
-<p>After finetuning backbones, I concatenated image embedding and text embedding which are l2-normalized. An then, I found optimal threshold value for matching same product based on concatenated embedding vectors.</p>
+* Finetuned those backbones using ```ArcFaceloss```, which enhances ```intra-class compactness``` and ```inter-class discrepancy``` of embedding vectors.
 
+* Encoder architectures are trained with 60% of the data, with larger learning rate for parameters of cosine head.
+
+* After finetuning backbones, I concatenated image embedding and text embedding which are l2-normalized. An then, I found optimal threshold value for matching same product based on concatenated embedding vectors.</p>
 
 
 ## 2. Data
@@ -19,17 +30,20 @@ you can download dataframe and images to ```../data/``` directory from the [link
 
 ``` 
 cd ../data
-gdown "google drive link url"
+gdown [link for csv file]
+gdown [link for image files]
+unzip train_imgs.zip
 ```
 
 ## 3. Training
-To train image encoder, command ```python image_main.py```<br>To train text encoder, command ```python text_main.py```
+To train image encoder : ```python image_main.py```
 
-Trained models will be saved as checkpoint file at 
+To train text encoder : ```python text_main.py```
 
-```../model_checkpoint/image_encoder``` and ```../model_checkpoint/text_encoder``` respectively.
+Trained models will be saved at ```../output``` directory.
 
 ## 4. Models
+Download image encoder from link to ```../model/image_encoder``` directory
+Download text encoder from link to ```../model/text_encoder``` directory
 
-
-## 5. Evaluation
+## 5. Result

@@ -13,7 +13,7 @@ CFG_VIT = {
                                 },
     'path' : {'output' : '../model_checkpoint/image_encoder/',
               'df' : '../data/train.csv',
-              'image_dir' : '../data/train_imgs/'}
+              'image_dir' : '../data/train_imgs/'
     }
 
 CFG_BERT = {

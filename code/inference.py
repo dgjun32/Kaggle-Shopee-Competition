@@ -14,17 +14,19 @@ class Matching:
         self.cfg_img = cfg_img
         self.cfg_text = cfg_text
         self.best_threshold = None
-        img_model = VIT_MODEL(cfg_img).load_state_dict(cfg['path']['model']).eval()
-        text_model = IND_BERT(cfg_text).load_state_dict(cfg['path']['model']).eval()
-        self.embeddings = self._compute_representations(img_model, text_model, dataloader, tokenizer)
-        del img_model, text_model
+        self.img_model = VIT_MODEL(cfg_img).load_state_dict(cfg['path']['model']).eval()
+        self.text_model = IND_BERT(cfg_text).load_state_dict(cfg['path']['model']).eval()
+        self.dataloader = dataloader
+        self._compute_representations()
+        self._set_multimodal_embeddings()
+        del self.img_model, self.text_model
         gc.collect()
 
-    def _compute_representations(self, img_model, text_model, dataloader):
+    def _compute_representations(self):
         img_reps, text_reps = [], []
-        img_model.cuda()
-        text_model.cuda()
-        for i, batch in enumerate(dataloader):
+        self.img_model.cuda()
+        self.text_model.cuda()
+        for i, batch in enumerate(self.dataloader):
             imgs, texts = batch
             imgs.cuda()
             texts.cuda()
@@ -32,8 +34,13 @@ class Matching:
             text_rep = text_model(texts)
             img_reps.append(img_rep)
             text_reps.append(text_rep)
-        return torch.cat([torch.cat(img_reps, dim=0), torch.cat(text_reps, dim=0)], dim = 1)
-
+        self.img_embeddings = torch.stack(img_reps, dim=0)
+        self.text_embeddings = torch.stack(text_reps, dim=0)
+    
+    def _set_multimodal_embeddings(self):
+        # concatenating image embedding and text embedding
+        self.embeddings = torch.stack([self.img_embeddings, self.text_embeddings], dim=1)
+    
     def _get_neighbors_cv(self, df, thresholds, k):
         '''
         df : dataframe containing product id
