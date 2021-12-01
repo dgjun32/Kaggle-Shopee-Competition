@@ -6,11 +6,11 @@ CFG_VIT = {
                'scale' : 50,
                'margin' : 0.9},
     'training' : {'batch_size':64,
-                  'epochs' : 10,
-                  'optim' : 'torch.optim.Adam',
-                  'lr_schedule':{'name':'torch.optim.lr_scheduler.CosineAnnealingLR',
-                                 'learning_rate':2e-5}
-                                },
+                  'epochs' :30,
+                  'optim' : 'torch.optim.AdamW',
+                  'lr_scheduler': 'torch.optim.lr_scheduler.CosineAnnealingLR',
+                  'backbone_lr':2e-5
+                  'learning_rate':2e-3},
     'path' : {'output' : '../model_checkpoint/image_encoder/',
               'df' : '../data/train.csv',
               'image_dir' : '../data/'
@@ -24,11 +24,11 @@ CFG_BERT = {
                'scale' : 50,
                'margin' : 0.7},
     'training' : {'batch_size' : 32,
-                  'epochs':100,
-                  'optim' : 'torch.optim.Adam',
-                  'lr_schedule':{'name':'torch.optim.lr_scheduler.CosineAnnealingLR',
-                                 'backbone_lr':1e-5,
-                                 'arcface_lr':5e-3}
+                  'epochs':30,
+                  'optim' : 'torch.optim.AdamW',
+                  'lr_scheduler' : 'torch.optim.lr_scheduler.CosineAnnealingLR',
+                  'backbone_lr':1e-5,
+                  'arcface_lr':5e-3}
                   },
     'path' : {'output': '../model_checkpoint/text_encoder/',
               'df' : '../data/train.csv'}

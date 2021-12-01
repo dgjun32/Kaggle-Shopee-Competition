@@ -75,20 +75,5 @@ class IND_BERT(pl.LightningModule):
         else:
             return x
 
-    def _step(self, batch):
-        text, label = batch
-        out = self.forward(input = text, label = label)
-        loss = self.criterion(out, label)
-        return out, label, loss
+
     
-    def training_step(self, batch, batch_idx):
-        pred, label, loss = self._step(batch)
-        tensorboard_log = {'train_loss':loss}
-        return {'loss':loss, 'log':tensorboard_log}
-    
-    def validation_step(self, batch, batch_idx):
-        with torch.no_grad():
-            pred, label, loss = self._step(batch)
-            pred = torch.argmax(pred, axis = 1).reshape(pred.shape[0],)
-            label = label.reshape(pred.shape[0],)
-        return {'val_pred': pred, 'val_label': label, 'val_loss':loss}
