@@ -26,13 +26,13 @@ I applied two-step approach for <b>Product Matching</b> task.
 
 
 ## 2. Data
-you can download dataframe and images to ```../data/``` directory from the [link](https://www.kaggle.com/c/shopee-product-matching/data).
+Download image .zip file and .csv file to ```../data/``` directory from the [image link](https://drive.google.com/file/d/14thWaVaW65WSuyaNs2yH0JUqz4BLYF0X/view?usp=sharing) and [csv link](https://drive.google.com/file/d/1kahUn1TGA-vXPjV0UMlYC_rFUtV3yzve/view?usp=sharing).
 
 ``` 
 cd ../data
 gdown [link for csv file]
 gdown [link for image files]
-unzip train_imgs.zip
+unzip train_images.zip
 ```
 
 ## 3. Training
