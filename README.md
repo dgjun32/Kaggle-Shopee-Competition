@@ -36,9 +36,9 @@ unzip train_images.zip
 ```
 
 ## 3. Training
-To train image encoder : ```python main.py --model_type image --gpu cuda:0 --seed [random seed]
+To train image encoder : ```python main.py --model_type image --gpu cuda:0 --seed [random seed]```
 
-To train text encoder : ```python main.py --model_type text --gpu cuda:0 --seed [random seed]
+To train text encoder : ```python main.py --model_type text --gpu cuda:0 --seed [random seed]```
 
 Trained models will be saved at ```../output``` directory.
 
