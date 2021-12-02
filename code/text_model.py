@@ -1,7 +1,9 @@
 import transformers
 import torch
 import torch.nn as nn
+from torch.nn import functional as F
 from transformers import BertTokenizer, BertModel
+import math
 
 class ArcMarginProduct(nn.Module):
     def __init__(self, in_feature, out_feature, s, m, easy_margin=False):
@@ -50,9 +52,9 @@ class IND_BERT(nn.Module):
         self.linear = backbone.pooler.dense
         # freezing backbone weight
         for param in self.encoder.parameters():
-            param.requires_grad = False
+            param.requires_grad = True
         for param in self.linear.parameters():
-            param.requires_grad = False
+            param.requires_grad = True
         self.arcface = ArcMarginProduct(in_feature = 768,
                                            out_feature = cfg['model']['num_classes'],
                                            s = cfg['model']['scale'],

@@ -8,13 +8,18 @@ CFG_VIT = {
     'training' : {'batch_size':64,
                   'epochs' :30,
                   'optim' : 'torch.optim.AdamW',
-                  'lr_scheduler': 'torch.optim.lr_scheduler.CosineAnnealingLR',
-                  'backbone_lr':2e-5
-                  'arcface_lr':2e-3},
+                  'lr_scheduler': 'torch.optim.lr_scheduler.CosineAnnealingWarmRestarts',
+                  'backbone_lr':2e-5,
+                  'arcface_lr':2e-3,
+                  'T_mult':1,
+                  'T_0':643,
+                  'T_up':1500,
+                  'eta_min':1e-7,
+                  'gamma':0.9},
     'path' : {'output' : '../output/image_encoder/',
               'df' : '../data/train.csv',
-              'image_dir' : '../data/'
-    }
+              'image_dir' : '../data/'}
+}
 
 CFG_BERT = {
     'model' : {'name': 'transformers.BertModel',
@@ -26,10 +31,14 @@ CFG_BERT = {
     'training' : {'batch_size' : 32,
                   'epochs':30,
                   'optim' : 'torch.optim.AdamW',
-                  'lr_scheduler' : 'torch.optim.lr_scheduler.CosineAnnealingLR',
+                  'lr_scheduler' : 'torch.optim.lr_scheduler.CosineAnnealingWarmRestarts',
                   'backbone_lr':1e-5,
-                  'arcface_lr':5e-3}
-                  },
+                  'arcface_lr':5e-3,
+                  'T_0':643,
+                  'T_mult':1,
+                  'T_up': 1500,
+                  'eta_min':1e-7,
+                  'gamma':0.9},
     'path' : {'output': '../output/text_encoder/',
               'df' : '../data/train.csv'}
     }

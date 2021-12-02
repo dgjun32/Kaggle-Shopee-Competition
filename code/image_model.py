@@ -6,20 +6,12 @@ import sys
 import math
 
 #modeling
+import torch
 import torch.nn as nn
-import pytorch_lightning as pl
-from pytorch_lightning.utilities.seed import seed_everything
-from pytorch_lightning import callbacks
-from pytorch_lightning.callbacks.progress import ProgressBarBase
-from pytorch_lightning.callbacks.early_stopping import EarlyStopping
-from pytorch_lightning.loggers import TensorBoardLogger
-from pytorch_lightning import LightningDataModule, LightningModule
-
+from torch.nn import functional as F
+import transformers
 #image preprocessing and input pipeline
 from PIL import Image
-
-#warnings
-import warnings
 
 # ArcFace Module
 class ArcMarginProduct(nn.Module):
@@ -63,11 +55,10 @@ class VIT_MODEL(nn.Module):
     def __init__(self, cfg):
         super().__init__()
         self.cfg = cfg
-        self.backbone = eval(cfg['model']['name']).from_pretrained(cfg['model']['weight'])
-        self.backbone = self.backbone.vit
-        # freezing backbone weight
+        backbone = eval(cfg['model']['name']).from_pretrained(cfg['model']['weight'])
+        self.backbone = backbone.vit
         for param in self.backbone.parameters():
-            param.requires_grad = False
+            param.requires_grad = True
         self.arcface = ArcMarginProduct(in_feature = 768,
                                            out_feature = cfg['model']['num_classes'],
                                            s = cfg['model']['scale'],
