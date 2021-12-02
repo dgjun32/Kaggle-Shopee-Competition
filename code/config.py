@@ -10,8 +10,8 @@ CFG_VIT = {
                   'optim' : 'torch.optim.AdamW',
                   'lr_scheduler': 'torch.optim.lr_scheduler.CosineAnnealingLR',
                   'backbone_lr':2e-5
-                  'learning_rate':2e-3},
-    'path' : {'output' : '../model_checkpoint/image_encoder/',
+                  'arcface_lr':2e-3},
+    'path' : {'output' : '../output/image_encoder/',
               'df' : '../data/train.csv',
               'image_dir' : '../data/'
     }
@@ -30,6 +30,6 @@ CFG_BERT = {
                   'backbone_lr':1e-5,
                   'arcface_lr':5e-3}
                   },
-    'path' : {'output': '../model_checkpoint/text_encoder/',
+    'path' : {'output': '../output/text_encoder/',
               'df' : '../data/train.csv'}
     }
