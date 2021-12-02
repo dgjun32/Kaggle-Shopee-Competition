@@ -65,16 +65,16 @@ def main():
     print('Set Dataloader')
     # set optimizer and scheduler
     if args.model_type == 'text':
-        optimizer_arcface = eval(cfg['training']['optim'])(model.arcface.parameters(), lr = cfg['training']['arcface_lr'])
+        optimizer_arcface = eval(cfg['training']['optim'])(model.arcface.parameters(), lr = cfg['training']['eta_min'])
         para = list()
         for p in model.encoder.parameters():
             para.append(p)
         for p in model.linear.parameters():
             para.append(p)
         optimizer_backbone = eval(cfg['training']['optim'])(para,
-                                                            lr = cfg['training']['backbone_lr'])
+                                                            lr = cfg['training']['eta_min'])
         scheduler_arcface = CosineAnnealingWarmUpRestarts(optimizer_arcface,
-                                                    init_lr = cfg['training']['eta_min'],
+                                                    eta_max = cfg['training']['arcface_lr'],
                                                     T_up = cfg['training']['T_up'],
                                                     T_mult = cfg['training']['T_mult'],
                                                     T_0 = cfg['training']['T_0'],
@@ -83,22 +83,22 @@ def main():
                                                     T_up = cfg['training']['T_up'],
                                                     T_mult = cfg['training']['T_mult'],
                                                     T_0 = cfg['training']['T_0'],
-                                                    init_lr = cfg['training']['eta_min'],
+                                                    eta_max = cfg['training']['backbone_lr'],
                                                     gamma = cfg['training']['gamma'])                                   
     
     else:
         optimizer_arcface = eval(cfg['training']['optim'])(model.arcface.parameters(),
-                                                             lr = cfg['training']['arcface_lr'])
+                                                             lr = cfg['training']['eta_min'])
         optimizer_backbone = eval(cfg['training']['optim'])(model.backbone.parameters(),
-                                                            lr = cfg['training']['backbone_lr'])
+                                                            lr = cfg['training']['eta_min'])
         scheduler_arcface = CosineAnnealingWarmUpRestarts(optimizer_arcface,
-                                                    init_lr = cfg['training']['eta_min'],
+                                                    eta_max = cfg['training']['arcface_lr'],
                                                     T_up = cfg['training']['T_up'],
                                                     T_mult = cfg['training']['T_mult'],
                                                     T_0 = cfg['training']['T_0'],
                                                     gamma = cfg['training']['gamma'])         
         scheduler_backbone = CosineAnnealingWarmUpRestarts(optimizer_backbone,
-                                                    init_lr = cfg['training']['eta_min'],
+                                                    eta_max = cfg['training']['backbone_lr'],
                                                     T_up = cfg['training']['T_up'],
                                                     T_mult = cfg['training']['T_mult'],
                                                     T_0 = cfg['training']['T_0'],

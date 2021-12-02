@@ -14849,3 +14849,84 @@ Traceback (most recent call last):
   File "/home/coder/dongjun/Kaggle-Shopee-Competition/code/main.py", line 76, in main
     scheduler_arcface = CosineAnnealingWarmUpRestarts(optimizer_arcface,
 TypeError: __init__() got an unexpected keyword argument 'init_lr'
+Some weights of the model checkpoint at cahya/bert-base-indonesian-522M were not used when initializing BertModel: ['cls.predictions.transform.LayerNorm.bias', 'cls.predictions.transform.LayerNorm.weight', 'cls.predictions.decoder.weight', 'cls.predictions.transform.dense.weight', 'cls.predictions.decoder.bias', 'cls.predictions.bias', 'cls.predictions.transform.dense.bias']
+- This IS expected if you are initializing BertModel from the checkpoint of a model trained on another task or with another architecture (e.g. initializing a BertForSequenceClassification model from a BertForPreTraining model).
+- This IS NOT expected if you are initializing BertModel from the checkpoint of a model that you expect to be exactly identical (initializing a BertForSequenceClassification model from a BertForSequenceClassification model).
+Epochs:   0%|          | 0/30 [00:00<?, ?it/s]
+Training:   0%|          | 0/643 [00:00<?, ?it/s][A
+1epoch Training loss: 4.29e+01 lr_1: 1.07e-07 lr_2: 3.43e-06:   0%|          | 1/643 [00:01<12:11,  1.14s/it][A
+1epoch Training loss: 4.29e+01 lr_1: 1.13e-07 lr_2: 6.77e-06:   0%|          | 2/643 [00:01<10:05,  1.06it/s][A
+1epoch Training loss: 4.30e+01 lr_1: 1.20e-07 lr_2: 1.01e-05:   0%|          | 3/643 [00:02<08:36,  1.24it/s][A
+1epoch Training loss: 4.29e+01 lr_1: 1.26e-07 lr_2: 1.34e-05:   1%|          | 4/643 [00:02<07:34,  1.41it/s][A
+1epoch Training loss: 4.29e+01 lr_1: 1.33e-07 lr_2: 1.68e-05:   1%|          | 5/643 [00:03<06:50,  1.55it/s][A
+1epoch Training loss: 4.29e+01 lr_1: 1.40e-07 lr_2: 2.01e-05:   1%|          | 6/643 [00:03<06:19,  1.68it/s][A
+1epoch Training loss: 4.30e+01 lr_1: 1.46e-07 lr_2: 2.34e-05:   1%|          | 7/643 [00:04<05:57,  1.78it/s][A
+1epoch Training loss: 4.30e+01 lr_1: 1.53e-07 lr_2: 2.68e-05:   1%|          | 8/643 [00:04<05:42,  1.85it/s][A
+1epoch Training loss: 4.30e+01 lr_1: 1.59e-07 lr_2: 3.01e-05:   1%|▏         | 9/643 [00:05<05:31,  1.91it/s][A
+1epoch Training loss: 4.30e+01 lr_1: 1.66e-07 lr_2: 3.34e-05:   2%|▏         | 10/643 [00:05<05:23,  1.96it/s][A
+1epoch Training loss: 4.30e+01 lr_1: 1.73e-07 lr_2: 3.68e-05:   2%|▏         | 11/643 [00:05<05:17,  1.99it/s][A
+1epoch Training loss: 4.30e+01 lr_1: 1.79e-07 lr_2: 4.01e-05:   2%|▏         | 12/643 [00:06<05:14,  2.01it/s][A
+1epoch Training loss: 4.30e+01 lr_1: 1.86e-07 lr_2: 4.34e-05:   2%|▏         | 13/643 [00:06<05:12,  2.02it/s][A
+1epoch Training loss: 4.30e+01 lr_1: 1.92e-07 lr_2: 4.68e-05:   2%|▏         | 14/643 [00:07<05:10,  2.03it/s][A
+1epoch Training loss: 4.30e+01 lr_1: 1.99e-07 lr_2: 5.01e-05:   2%|▏         | 15/643 [00:07<05:08,  2.04it/s][A
+1epoch Training loss: 4.29e+01 lr_1: 2.06e-07 lr_2: 5.34e-05:   2%|▏         | 16/643 [00:08<05:07,  2.04it/s][A
+1epoch Training loss: 4.29e+01 lr_1: 2.12e-07 lr_2: 5.68e-05:   3%|▎         | 17/643 [00:08<05:06,  2.04it/s][A
+1epoch Training loss: 4.29e+01 lr_1: 2.19e-07 lr_2: 6.01e-05:   3%|▎         | 18/643 [00:09<05:05,  2.04it/s][A
+1epoch Training loss: 4.29e+01 lr_1: 2.25e-07 lr_2: 6.34e-05:   3%|▎         | 19/643 [00:09<05:05,  2.04it/s][A
+1epoch Training loss: 4.29e+01 lr_1: 2.32e-07 lr_2: 6.68e-05:   3%|▎         | 20/643 [00:10<05:05,  2.04it/s][A
+1epoch Training loss: 4.29e+01 lr_1: 2.39e-07 lr_2: 7.01e-05:   3%|▎         | 21/643 [00:10<05:05,  2.03it/s][A
+1epoch Training loss: 4.29e+01 lr_1: 2.45e-07 lr_2: 7.34e-05:   3%|▎         | 22/643 [00:11<05:04,  2.04it/s][A
+1epoch Training loss: 4.29e+01 lr_1: 2.52e-07 lr_2: 7.68e-05:   4%|▎         | 23/643 [00:11<05:02,  2.05it/s][A
+1epoch Training loss: 4.28e+01 lr_1: 2.58e-07 lr_2: 8.01e-05:   4%|▎         | 24/643 [00:12<05:02,  2.05it/s][A
+1epoch Training loss: 4.28e+01 lr_1: 2.65e-07 lr_2: 8.34e-05:   4%|▍         | 25/643 [00:12<05:01,  2.05it/s][A
+1epoch Training loss: 4.28e+01 lr_1: 2.72e-07 lr_2: 8.68e-05:   4%|▍         | 26/643 [00:13<05:00,  2.05it/s][A
+1epoch Training loss: 4.28e+01 lr_1: 2.78e-07 lr_2: 9.01e-05:   4%|▍         | 27/643 [00:13<04:59,  2.05it/s][A
+1epoch Training loss: 4.28e+01 lr_1: 2.85e-07 lr_2: 9.34e-05:   4%|▍         | 28/643 [00:14<04:59,  2.05it/s][A
+1epoch Training loss: 4.28e+01 lr_1: 2.91e-07 lr_2: 9.68e-05:   5%|▍         | 29/643 [00:14<04:58,  2.05it/s][A
+1epoch Training loss: 4.28e+01 lr_1: 2.98e-07 lr_2: 1.00e-04:   5%|▍         | 30/643 [00:15<04:58,  2.06it/s][A
+1epoch Training loss: 4.28e+01 lr_1: 3.05e-07 lr_2: 1.03e-04:   5%|▍         | 31/643 [00:15<04:57,  2.05it/s][A
+1epoch Training loss: 4.28e+01 lr_1: 3.11e-07 lr_2: 1.07e-04:   5%|▍         | 32/643 [00:16<04:57,  2.05it/s][A
+1epoch Training loss: 4.28e+01 lr_1: 3.18e-07 lr_2: 1.10e-04:   5%|▌         | 33/643 [00:16<04:56,  2.06it/s][A
+1epoch Training loss: 4.28e+01 lr_1: 3.24e-07 lr_2: 1.13e-04:   5%|▌         | 34/643 [00:17<04:55,  2.06it/s][A
+1epoch Training loss: 4.28e+01 lr_1: 3.31e-07 lr_2: 1.17e-04:   5%|▌         | 35/643 [00:17<04:55,  2.06it/s][A
+1epoch Training loss: 4.28e+01 lr_1: 3.38e-07 lr_2: 1.20e-04:   6%|▌         | 36/643 [00:18<04:55,  2.05it/s][A
+1epoch Training loss: 4.28e+01 lr_1: 3.44e-07 lr_2: 1.23e-04:   6%|▌         | 37/643 [00:18<04:55,  2.05it/s][A
+1epoch Training loss: 4.28e+01 lr_1: 3.51e-07 lr_2: 1.27e-04:   6%|▌         | 38/643 [00:19<04:56,  2.04it/s][A
+1epoch Training loss: 4.28e+01 lr_1: 3.57e-07 lr_2: 1.30e-04:   6%|▌         | 39/643 [00:19<04:56,  2.04it/s][A
+1epoch Training loss: 4.28e+01 lr_1: 3.64e-07 lr_2: 1.33e-04:   6%|▌         | 40/643 [00:20<04:55,  2.04it/s][A
+1epoch Training loss: 4.28e+01 lr_1: 3.71e-07 lr_2: 1.37e-04:   6%|▋         | 41/643 [00:20<04:54,  2.04it/s][A
+1epoch Training loss: 4.28e+01 lr_1: 3.77e-07 lr_2: 1.40e-04:   7%|▋         | 42/643 [00:21<04:53,  2.05it/s][A
+1epoch Training loss: 4.28e+01 lr_1: 3.84e-07 lr_2: 1.43e-04:   7%|▋         | 43/643 [00:21<04:52,  2.05it/s][A
+1epoch Training loss: 4.28e+01 lr_1: 3.90e-07 lr_2: 1.47e-04:   7%|▋         | 44/643 [00:22<04:52,  2.05it/s][A
+1epoch Training loss: 4.28e+01 lr_1: 3.97e-07 lr_2: 1.50e-04:   7%|▋         | 45/643 [00:22<04:53,  2.04it/s][A
+1epoch Training loss: 4.28e+01 lr_1: 4.04e-07 lr_2: 1.53e-04:   7%|▋         | 46/643 [00:23<04:53,  2.03it/s][A
+1epoch Training loss: 4.28e+01 lr_1: 4.10e-07 lr_2: 1.57e-04:   7%|▋         | 47/643 [00:23<04:52,  2.03it/s][A
+1epoch Training loss: 4.28e+01 lr_1: 4.17e-07 lr_2: 1.60e-04:   7%|▋         | 48/643 [00:24<04:52,  2.03it/s][A
+1epoch Training loss: 4.29e+01 lr_1: 4.23e-07 lr_2: 1.63e-04:   8%|▊         | 49/643 [00:24<04:51,  2.03it/s][A
+1epoch Training loss: 4.29e+01 lr_1: 4.30e-07 lr_2: 1.67e-04:   8%|▊         | 50/643 [00:25<04:50,  2.04it/s][A
+1epoch Training loss: 4.29e+01 lr_1: 4.37e-07 lr_2: 1.70e-04:   8%|▊         | 51/643 [00:25<04:49,  2.04it/s][A
+1epoch Training loss: 4.29e+01 lr_1: 4.43e-07 lr_2: 1.73e-04:   8%|▊         | 52/643 [00:26<04:48,  2.05it/s][A
+1epoch Training loss: 4.29e+01 lr_1: 4.50e-07 lr_2: 1.77e-04:   8%|▊         | 53/643 [00:26<04:48,  2.04it/s][A
+1epoch Training loss: 4.29e+01 lr_1: 4.56e-07 lr_2: 1.80e-04:   8%|▊         | 54/643 [00:27<04:49,  2.03it/s][A
+1epoch Training loss: 4.29e+01 lr_1: 4.63e-07 lr_2: 1.83e-04:   9%|▊         | 55/643 [00:27<04:49,  2.03it/s][A
+1epoch Training loss: 4.29e+01 lr_1: 4.70e-07 lr_2: 1.87e-04:   9%|▊         | 56/643 [00:28<04:49,  2.03it/s][A
+1epoch Training loss: 4.29e+01 lr_1: 4.76e-07 lr_2: 1.90e-04:   9%|▉         | 57/643 [00:28<04:49,  2.02it/s][A
+1epoch Training loss: 4.29e+01 lr_1: 4.83e-07 lr_2: 1.93e-04:   9%|▉         | 58/643 [00:28<04:49,  2.02it/s][A
+1epoch Training loss: 4.29e+01 lr_1: 4.89e-07 lr_2: 1.97e-04:   9%|▉         | 59/643 [00:29<04:48,  2.02it/s][A
+1epoch Training loss: 4.28e+01 lr_1: 4.96e-07 lr_2: 2.00e-04:   9%|▉         | 60/643 [00:29<04:48,  2.02it/s][A
+1epoch Training loss: 4.28e+01 lr_1: 5.03e-07 lr_2: 2.03e-04:   9%|▉         | 61/643 [00:30<04:47,  2.02it/s][A
+1epoch Training loss: 4.28e+01 lr_1: 5.09e-07 lr_2: 2.07e-04:  10%|▉         | 62/643 [00:30<04:46,  2.03it/s][A
+1epoch Training loss: 4.28e+01 lr_1: 5.16e-07 lr_2: 2.10e-04:  10%|▉         | 63/643 [00:31<04:45,  2.03it/s][A
+1epoch Training loss: 4.28e+01 lr_1: 5.22e-07 lr_2: 2.13e-04:  10%|▉         | 64/643 [00:31<04:44,  2.03it/s][A
+1epoch Training loss: 4.28e+01 lr_1: 5.29e-07 lr_2: 2.17e-04:  10%|█         | 65/643 [00:32<04:44,  2.03it/s][A
+1epoch Training loss: 4.28e+01 lr_1: 5.36e-07 lr_2: 2.20e-04:  10%|█         | 66/643 [00:32<04:43,  2.03it/s][A
+1epoch Training loss: 4.28e+01 lr_1: 5.42e-07 lr_2: 2.23e-04:  10%|█         | 67/643 [00:33<04:42,  2.04it/s][A
+1epoch Training loss: 4.28e+01 lr_1: 5.49e-07 lr_2: 2.27e-04:  11%|█         | 68/643 [00:33<04:42,  2.04it/s][A
+1epoch Training loss: 4.28e+01 lr_1: 5.55e-07 lr_2: 2.30e-04:  11%|█         | 69/643 [00:34<04:41,  2.04it/s][A
+1epoch Training loss: 4.28e+01 lr_1: 5.62e-07 lr_2: 2.33e-04:  11%|█         | 70/643 [00:34<04:40,  2.04it/s][A
+1epoch Training loss: 4.28e+01 lr_1: 5.69e-07 lr_2: 2.37e-04:  11%|█         | 71/643 [00:35<04:39,  2.05it/s][A
+1epoch Training loss: 4.27e+01 lr_1: 5.75e-07 lr_2: 2.40e-04:  11%|█         | 72/643 [00:35<04:39,  2.05it/s][A
+1epoch Training loss: 4.27e+01 lr_1: 5.82e-07 lr_2: 2.43e-04:  11%|█▏        | 73/643 [00:36<04:38,  2.05it/s][A
+1epoch Training loss: 4.27e+01 lr_1: 5.88e-07 lr_2: 2.47e-04:  12%|█▏        | 74/643 [00:36<04:39,  2.04it/s][A
+1epoch Training loss: 4.27e+01 lr_1: 5.95e-07 lr_2: 2.50e-04:  12%|█▏        | 75/643 [00:37<04:39,  2.03it/s][A
+1epoch Training loss: 4.27e+01 lr_1: 6.02e-07 lr_2: 2.53e-04:  12%|█▏        | 76/643 [00:37<04:38,  2.04it/s][A
