@@ -59,7 +59,7 @@ class ArcMarginProduct(nn.Module):
         return outputs
 
 # Vision Transformer based feature extractor
-class VIT_MODEL(pl.LightningModule):
+class VIT_MODEL(nn.Module):
     def __init__(self, cfg):
         super().__init__()
         self.cfg = cfg
@@ -72,53 +72,14 @@ class VIT_MODEL(pl.LightningModule):
                                            out_feature = cfg['model']['num_classes'],
                                            s = cfg['model']['scale'],
                                            m = cfg['model']['margin'])
-        self.criterion = nn.CrossEntropyLoss()
-    
     def forward(self, input, label = None):
-        x = self.backbone(input)
+        x = self.backbone(input.cuda())
         x = x['last_hidden_state'][:,0,:]
         x = nn.functional.normalize(x)
         if label is not None:
-            arcmargin = self.arcface(x, label)
+            arcmargin = self.arcface(x, label.cuda())
             return arcmargin
         else:
             return x
 
-    def _step(self, batch):
-        img, label = batch
-        out = self.forward(input = img, label = label)
-        loss = self.criterion(out, label)
-        return out, label, loss
     
-    def training_step(self, batch, batch_idx):
-        pred, label, loss = self._step(batch)
-        tensorboard_log = {'train_loss':loss}
-        return {'loss':loss, 'log':tensorboard_log}
-    
-    def validation_step(self, batch, batch_idx):
-        with torch.no_grad():
-            pred, label, loss = self._step(batch)
-            pred = torch.argmax(pred, axis = 1).reshape(batch[0].shape[0],)
-            label = label.reshape(batch[0].shape[0],)
-        return {'val_pred': pred, 'val_label': label, 'val_loss':loss}
-    
-    def validation_epoch_end(self, outputs):
-        avg_loss = torch.stack([x['val_loss'] for x in outputs]).mean()
-        pred = torch.cat([x['val_pred'] for x in outputs])
-        label = torch.cat([x['val_label'] for x in outputs])
-        pred.to('cpu')
-        label.to('cpu')
-        acc = (pred == label).sum() / len(pred)
-        print(f"Epoch {self.current_epoch} avg_loss:{avg_loss} acc:{acc}")
-        self.log('val_loss', avg_loss)
-        tensorboard_logs = {'val_loss': avg_loss, 'val_acc': acc}
-        return {'val_loss': avg_loss,
-                'val_acc': acc,
-                'log': tensorboard_logs}
-            
-    def configure_optimizers(self):
-        optimizer = eval(self.cfg['training']['optim'])(self.parameters(),
-                                                        lr = self.cfg['training']['lr_schedule']['learning_rate'])
-        schedule = eval(self.cfg['training']['lr_schedule']['name'])(optimizer = optimizer,
-                                                                     T_max = self.cfg['training']['epochs'])
-        return [optimizer], [schedule]

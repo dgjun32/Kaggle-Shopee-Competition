@@ -20,6 +20,9 @@ def main():
     parser.add_argument('--seed', type=int, default=42, dest='seed')
     args = parser.parse_args()
 
+    # set device
+    torch.cuda.set_device(args.gpu_id)
+    # load dataset
     train = pd.read_csv(CFG_VIT['path']['df'])
     train = label_mapper(train)
     train_df, val_df = sklearn.model_selection.train_test_split(train,
@@ -34,6 +37,7 @@ def main():
         cfg = CFG_VIT
         # model
         model = VIT_MODEL(cfg)
+        model.cuda()
         # data
         transforms = build_transforms(cfg)
         traindata = ShopeeImageDataset(train_df, cfg, transforms, mode = 'train')
@@ -45,6 +49,7 @@ def main():
         cfg = CFG_BERT
         # model
         model = IND_BERT(cfg)
+        model.cuda()
         # data
         traindata = ShopeeTextDataset(train_df, cfg, mode = 'train')
         valdata = ShopeeTextDataset(val_df, cfg, mode = 'train')
@@ -96,8 +101,11 @@ def main():
                 label.to('cpu')
                 val_pred.append(pred)
                 val_label.append(label)
-        val_pred = torch.cat(val_pred)
-        val_label = torch.cat(val_label)
+        val_pred = torch.cat(val_pred, dim=0)
+        val_label = torch.cat(val_label, dim=0)
         acc = (val_pred == val_label).sum() / len(val_pred)
         print('Validation acc: {:.2e}'.format(acc))
+
+if __name__ == '__main__':
+    main()
 

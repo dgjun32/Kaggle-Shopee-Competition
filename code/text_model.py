@@ -39,7 +39,7 @@ class ArcMarginProduct(nn.Module):
         outputs = outputs * self.s
         return outputs
 
-class IND_BERT(pl.LightningModule):
+class IND_BERT(nn.Module):
     def __init__(self, cfg):
         super().__init__()
         self.cfg = cfg
