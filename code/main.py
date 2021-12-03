@@ -65,14 +65,17 @@ def main():
     print('Set Dataloader')
     # set optimizer and scheduler
     if args.model_type == 'text':
-        optimizer_arcface = eval(cfg['training']['optim'])(model.arcface.parameters(), lr = cfg['training']['eta_min'])
+        optimizer_arcface = eval(cfg['training']['optim'])(model.arcface.parameters(),
+                                                         lr = cfg['training']['eta_min'],
+                                                         weight_decay=0.1)
         para = list()
         for p in model.encoder.parameters():
             para.append(p)
         for p in model.linear.parameters():
             para.append(p)
         optimizer_backbone = eval(cfg['training']['optim'])(para,
-                                                            lr = cfg['training']['eta_min'])
+                                                            lr = cfg['training']['eta_min'],
+                                                            weight_decay = 0.1)
         scheduler_arcface = CosineAnnealingWarmUpRestarts(optimizer_arcface,
                                                     eta_max = cfg['training']['arcface_lr'],
                                                     T_up = cfg['training']['T_up'],
@@ -88,9 +91,11 @@ def main():
     
     else:
         optimizer_arcface = eval(cfg['training']['optim'])(model.arcface.parameters(),
-                                                             lr = cfg['training']['eta_min'])
+                                                             lr = cfg['training']['eta_min'],
+                                                             weight_decay = 0.1)
         optimizer_backbone = eval(cfg['training']['optim'])(model.backbone.parameters(),
-                                                            lr = cfg['training']['eta_min'])
+                                                            lr = cfg['training']['eta_min'],
+                                                            weight_decay = 0.1)
         scheduler_arcface = CosineAnnealingWarmUpRestarts(optimizer_arcface,
                                                     eta_max = cfg['training']['arcface_lr'],
                                                     T_up = cfg['training']['T_up'],
@@ -121,6 +126,10 @@ def main():
             loss = nn.CrossEntropyLoss()(pred, label.cuda())
             # backward propagate
             loss.backward()
+            # gradient clipping
+            torch.nn.utils.clip_grad_norm_(model.parameters(),
+                                        cfg['training']['grad_clip'])
+            # update weights & lr
             optimizer_arcface.step()
             optimizer_backbone.step()
             scheduler_arcface.step()
@@ -134,28 +143,29 @@ def main():
                                                                                         epoch_loss/epoch_steps,
                                                                                         scheduler_backbone.get_lr()[0],
                                                                                         scheduler_arcface.get_lr()[0])
-        # checkpoint
-        torch.save(model.state_dict(), os.path.join(cfg['path']['output'], '{}_encoder_{}steps'.format(args.model_type, total_steps))+'.pth')
-        # Validate
-        print('Validating....')
-        val_pred = []
-        val_label = []
-        for i,batch in enumerate(valloader):
-            text, label = batch
-            with torch.no_grad():
-                pred = model(input = text)
-                pred = torch.topk(pred, 5, dim = 1).indices # batch_size x 5
-                label = label.reshape(pred.shape[0],)
-                val_pred.append(pred)
-                val_label.append(label)
-        val_pred = torch.cat(val_pred, dim=0).cpu()
-        val_label = torch.cat(val_label, dim=0).cpu()
-        ans = 0
-        for i in range(val_pred.shape[0]):
-            if val_label[i] in val_pred[i]:
-                ans += 1
-        acc = ans / val_pred.shape[0]
-        print('Top-5 acc : {:.2e}%'.format(acc*100))
+            if total_steps % cfg['training']['save_term'] == 0:
+                # checkpoint
+                torch.save(model.state_dict(), os.path.join(cfg['path']['output'], '{}_encoder_{}steps'.format(args.model_type, total_steps))+'.pth')
+                # Validate
+                print('Validating....')
+                val_pred = []
+                val_label = []
+                for i,batch in enumerate(valloader):
+                    text, label = batch
+                    with torch.no_grad():
+                        pred = model(input = text)
+                        pred = torch.topk(pred, 10, dim = 1).indices # batch_size x 10
+                        label = label.reshape(pred.shape[0],)
+                        val_pred.append(pred)
+                        val_label.append(label)
+                val_pred = torch.cat(val_pred, dim=0).cpu()
+                val_label = torch.cat(val_label, dim=0).cpu()
+                ans = 0
+                for i in range(val_pred.shape[0]):
+                    if val_label[i] in val_pred[i]:
+                        ans += 1
+                acc = ans / val_pred.shape[0]
+                print('Top-10 acc : {:.2e}%'.format(acc*100))
 
 if __name__ == '__main__':
     main()
