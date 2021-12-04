@@ -4,7 +4,9 @@ import numpy as np
 import pandas as pd
 import sklearn
 from sklearn.model_selection import train_test_split
+from sklearn.metrics.pairwise import cosine_similarity
 import argparse
+import gc
 
 from image_model import VIT_MODEL
 from text_model import IND_BERT
@@ -51,7 +53,7 @@ class Matching:
     
     def _set_multimodal_embeddings(self):
         # concatenating image embedding and text embedding
-        embeddings = torch.stack([self.img_embeddings, self.text_embeddings], dim=1).norm(dim=-1, keepdim=True)
+        embeddings = nn.functional.normalize(torch.cat([self.img_embeddings, self.text_embeddings], dim=1))
         self.embeddings = embeddings.cpu().numpy()
     # CV for selecting optimal threshold with validation set
     def match_cv(self, df, threshold_li):
@@ -70,9 +72,10 @@ class Matching:
                 ids = ' '.join(df['posting_id'].iloc[idx].values)
                 pred.append(ids)
             df['pred_matching'] = pred
-            df['f1_score'] = f1_score(df['match'], df['matching'])
+            df['f1_score'] = f1_score(df['match'], df['pred_matching'])
             f1 = df['f1_score'].mean()
             scores.append(f1)
+            print(df)
             print('threshold : {} | f1_score : {}'.format(t, f1))
             if f1 > best_f1:
                 best_f1 = f1
@@ -96,7 +99,7 @@ if __name__ == '__main__':
     parser.add_argument('--model_type', choices = ['image', 'text'], dest='model_type')
     parser.add_argument('--gpu', choices = ['cuda:0', 'cuda:1'], dest='gpu_id')
     parser.add_argument('--seed', type=int, default=42, dest='seed'),
-    parser.add_argument('--cv', type=bool, default=True, dest='cv')
+    parser.add_argument('--cv', type=bool, default=False, dest='cv')
     parser.add_argument('--threshold', type=float, default=0, dest='threshold')
     args = parser.parse_args()
     print(args)
@@ -122,7 +125,7 @@ if __name__ == '__main__':
         # initiate matching engine
         matching_engine = Matching(dataloader, cfg_img, cfg_text)
         # search best threshold
-        thresholds = list(range(0.1,1,0.05))
+        thresholds = list(np.arange(0.8,1,0.02))
         matching_engine.match_cv(val_df, thresholds)
     else:
         dataset = ShopeeDataset(test_df, cfg_img, transforms)
