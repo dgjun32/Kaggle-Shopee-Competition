@@ -49,6 +49,11 @@ Download text encoder from link to ```../model/text_encoder``` directory
 
 To check CV score with validation data: ```python inference.py --model_type image --gpu cuda:1 --seed 2022 --cv True```
 
-To make matching prediction on test data:  ```python inference.py --model_type image --gpu cuda:1 --seed 2022 --threshold 0.6```
+To make matching prediction on test data:  ```python inference.py --model_type image --gpu cuda:1 --seed 2022 --threshold 0.96```
 
 ## 5. Result
+
+| Validation f1-score | 0.8996 |
+|---                  |---     |
+| Public f1-score     |        |
+
