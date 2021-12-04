@@ -36,15 +36,19 @@ unzip train_images.zip
 ```
 
 ## 3. Training
-To train image encoder : ```python main.py --model_type image --gpu cuda:0 --seed [random seed]```
+To train image encoder : ```python main.py --model_type image --gpu cuda:0 --seed 2022```
 
-To train text encoder : ```python main.py --model_type text --gpu cuda:0 --seed [random seed]```
+To train text encoder : ```python main.py --model_type text --gpu cuda:0 --seed 2022```
 
 Trained models will be saved at ```../output``` directory.
 
-## 4. Models
+## 4. Matching Prediction
 Download image encoder from link to ```../model/image_encoder``` directory
 
 Download text encoder from link to ```../model/text_encoder``` directory
+
+To check CV score with validation data: ```python inference.py --model_type image --gpu cuda:1 --seed 2022 --cv True```
+
+To make matching prediction on test data:  ```python inference.py --model_type image --gpu cuda:1 --seed 2022 --cv True --threshold [optimal threshold]```
 
 ## 5. Result

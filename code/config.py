@@ -19,8 +19,12 @@ CFG_VIT = {
                   'grad_clip':0.25},
     'path' : {'output' : '../output/image_encoder/',
               'df' : '../data/train.csv',
-              'image_dir' : '../data/'}
+              'test_df' : '../data/test.csv',
+              'image_dir' : '../data/',
+              'model' : '../output/image_encoder/image_encoder_30epoch.pth',
+              'submission':'../submission/'}
 }
+
 
 CFG_BERT = {
     'model' : {'name': 'transformers.BertModel',
@@ -42,5 +46,8 @@ CFG_BERT = {
                   'save_term':643,
                   'grad_clip':0.25},
     'path' : {'output': '../output/text_encoder/',
-              'df' : '../data/train.csv'}
+              'df' : '../data/train.csv',
+              'test_df' : '../data/test.csv',
+              'model': '../output/text_encoder/text_encoder_10epoch.pth',
+              'submission':'../submission/'}
     }

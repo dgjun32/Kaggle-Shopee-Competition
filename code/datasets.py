@@ -26,13 +26,20 @@ class ShopeeImageDataset(torch.utils.data.Dataset):
             label = torch.tensor(self.df['label_group'][index]).long()
             return img.float(), label
 
-def build_transforms(cfg):
-    transform = transforms.Compose([
-                    transforms.ToTensor(),
-                    transforms.Normalize([0.5,0.5,0.5],[0.5,0.5,0.5]),
-                    transforms.Resize((cfg['model']['img_size'], cfg['model']['img_size'])),
-                    transforms.RandomHorizontalFlip(p = 0.5)
-    ])
+def build_transforms(cfg, mode = 'train'):
+    if mode == 'train':
+        transform = transforms.Compose([
+                        transforms.ToTensor(),
+                        transforms.Normalize([0.5,0.5,0.5],[0.5,0.5,0.5]),
+                        transforms.Resize((cfg['model']['img_size'], cfg['model']['img_size'])),
+                        transforms.RandomHorizontalFlip(p = 0.5)
+        ])
+    else:
+        transform = transforms.Compose([
+                        transforms.ToTensor(),
+                        transforms.Normalize([0.5,0.5,0.5],[0.5,0.5,0.5]),
+                        transforms.Resize((cfg['model']['img_size'], cfg['model']['img_size']))
+        ])
     return transform
 
 class ShopeeTextDataset(torch.utils.data.Dataset):
@@ -55,7 +62,6 @@ class ShopeeDataset(torch.utils.data.Dataset):
         self.df = df
         self.cfg = cfg
         self.transforms = transforms
-        self.mode = mode
     def __len__(self):
         return len(self.df)
     def __getitem__(self, index):

@@ -127,7 +127,7 @@ def main():
                                                                                         optimizer_arcface.param_groups[0]['lr'],
                                                                                         optimizer_backbone.param_groups[0]['lr']))
         # checkpoint
-        torch.save(model.state_dict(), os.path.join(cfg['path']['output'], '{}_encoder_{}steps'.format(args.model_type, total_steps))+'.pth')
+        torch.save(model.state_dict(), os.path.join(cfg['path']['output'], '{}_encoder_{}epoch'.format(args.model_type, epoch))+'.pth')
         # Validate
         print('Validating....')
         val_pred = []
