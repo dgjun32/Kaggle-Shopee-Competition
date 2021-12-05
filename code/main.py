@@ -13,6 +13,7 @@ from image_model import VIT_MODEL
 from text_model import IND_BERT
 from datasets import ShopeeImageDataset, ShopeeTextDataset, build_transforms
 from utils import label_mapper
+from inference import Matching
 
 print('Succesfully installed libraries')
 
@@ -45,7 +46,7 @@ def main():
         # data
         transforms = build_transforms(cfg)
         traindata = ShopeeImageDataset(train_df, cfg, transforms, mode = 'train')
-        valdata = ShopeeImageDataset(val_df, cfg, transforms, mode = 'train')
+        valdata = ShopeeImageDataset(val_df, cfg, transforms, mode = 'test')
         trainloader = torch.utils.data.DataLoader(traindata, batch_size = CFG_VIT['training']['batch_size'])
         valloader = torch.utils.data.DataLoader(valdata, batch_size = CFG_VIT['training']['batch_size'])
     else:
@@ -56,7 +57,7 @@ def main():
         model.cuda()
         # data
         traindata = ShopeeTextDataset(train_df, cfg, mode = 'train')
-        valdata = ShopeeTextDataset(val_df, cfg, mode = 'train')
+        valdata = ShopeeTextDataset(val_df, cfg, mode = 'test')
         trainloader = torch.utils.data.DataLoader(traindata, batch_size = cfg['training']['batch_size'])
         valloader = torch.utils.data.DataLoader(valdata, batch_size = cfg['training']['batch_size'])
     print('Load model with backbone : {}'.format(cfg['model']['name']))
@@ -127,27 +128,16 @@ def main():
                                                                                         optimizer_arcface.param_groups[0]['lr'],
                                                                                         optimizer_backbone.param_groups[0]['lr']))
         # checkpoint
-        torch.save(model.state_dict(), os.path.join(cfg['path']['output'], '{}_encoder_{}epoch'.format(args.model_type, epoch))+'.pth')
+        torch.save(model.state_dict(), os.path.join(cfg['path']['output'], '{}_encoder_{}epoch.pth'.format(args.model_type, epoch)))
         # Validate
         print('Validating....')
-        val_pred = []
-        val_label = []
-        for i,batch in enumerate(valloader):
-            text, label = batch
-            with torch.no_grad():
-                pred = model(input = text)
-                pred = torch.topk(pred, 10, dim = 1).indices # batch_size x 10
-                label = label.reshape(pred.shape[0],)
-                val_pred.append(pred)
-                val_label.append(label)
-        val_pred = torch.cat(val_pred, dim=0).cpu()
-        val_label = torch.cat(val_label, dim=0).cpu()
-        ans = 0
-        for i in range(val_pred.shape[0]):
-            if val_label[i] in val_pred[i]:
-                ans += 1
-        acc = ans / val_pred.shape[0]
-        print('Top-10 acc on {} epoch : {:.2e}%'.format(epoch+1, acc*100))
+        if args.model_type == 'image':
+            matching_val = Matching(dataloader=valloader, cfg_img = cfg, mode = args.model_type, model=model)
+        else:
+            matching_val = Matching(dataloader=valloader, cfg_text = cfg, mode = args.model_type, model=model)
+        
+        thresholds = [0.5, 0.7, 0.9, 0.92, 0.94, 0.96, 0.98]
+        matching_engine.match_cv(val_df, thresholds)
 
 if __name__ == '__main__':
     main()
