@@ -132,12 +132,12 @@ def main():
         # Validate
         print('Validating....')
         if args.model_type == 'image':
-            matching_val = Matching(dataloader=valloader, cfg_img = cfg, mode = args.model_type, model=model)
+            matching_val = Matching(dataloader=valloader, cfg_img=cfg, mode=args.model_type, model=model)
         else:
-            matching_val = Matching(dataloader=valloader, cfg_text = cfg, mode = args.model_type, model=model)
+            matching_val = Matching(dataloader=valloader, cfg_text=cfg, mode=args.model_type, model=model)
         
         thresholds = [0.5, 0.7, 0.9, 0.92, 0.94, 0.96, 0.98]
-        matching_engine.match_cv(val_df, thresholds)
+        matching_val.match_cv(val_df, thresholds)
 
 if __name__ == '__main__':
     main()

@@ -21,18 +21,25 @@ class Matching:
         self.mode = mode
         self.cfg_img = cfg_img
         self.cfg_text = cfg_text
+        
         if self.mode == 'multi' or self.mode =='image':
             if model is None:
+                # for computing cv score
                 self.img_model = VIT_MODEL(cfg_img)
                 self.img_model.load_state_dict(torch.load(cfg_img['path']['model']))
             else:
+                # for image model validation
                 self.img_model = model
+                self.cfg = cfg_img
         if self.mode == 'multi' or self.mode =='text':
             if model is None:
+                # for computing cv score
                 self.text_model = IND_BERT(cfg_text)
                 self.text_model.load_state_dict(torch.load(cfg_text['path']['model']))
             else:
+                # for text model validation
                 self.text_model = model
+                self.cfg = cfg_text
         self.dataloader = dataloader
         self._compute_representations()
         
@@ -40,7 +47,11 @@ class Matching:
         if self.mode == 'multi':
             self._set_multimodal_embeddings()
             del self.img_embeddings, self.text_embeddings
-        del self.img_model, self.text_model
+            del self.img_model, self.text_model
+        elif self.mode == 'image':
+            del self.img_model
+        elif self.mode == 'text':
+            del self.text_model
         gc.collect()
         torch.cuda.empty_cache()
 
@@ -57,7 +68,7 @@ class Matching:
                     text_rep = self.text_model(texts)
                     img_reps.append(img_rep)
                     text_reps.append(text_rep)
-                    if (i+1) % 50 == 0:
+                    if (i+1) % 100 == 0:
                         print('{}th img and texts are processed'.format(32*(i+1))) 
             self.img_embeddings = torch.cat(img_reps, dim=0)
             self.text_embeddings = torch.cat(text_reps, dim=0)
@@ -72,8 +83,9 @@ class Matching:
                     img_rep = self.img_model(imgs)
                     img_reps.append(img_rep)
                     if (i+1) % 50 == 0:
-                        print('{}th imgs are processed'.format(cfg_img['training']['batch_size']*(i+1))) 
-            self.embeddings = torch.cat(img_reps, dim=0)
+                        print('{}th imgs are processed'.format(self.cfg['training']['batch_size']*(i+1))) 
+            embeddings = torch.cat(img_reps, dim=0)
+            self.embeddings = embeddings.cpu().numpy()
             del img_reps
             gc.collect()
             torch.cuda.empty_cache()
@@ -85,8 +97,9 @@ class Matching:
                     text_rep = self.text_model(texts)
                     text_reps.append(text_rep)
                     if (i+1) % 50 == 0:
-                        print('{}th texts are processed'.format(cfg_text['training']['batch_size']*(i+1))) 
-            self.embeddings = torch.cat(text_reps, dim=0)
+                        print('{}th texts are processed'.format(self.cfg['training']['batch_size']*(i+1))) 
+            embeddings = torch.cat(text_reps, dim=0)
+            self.embeddings = embeddings.cpu().numpy()
             del text_reps
             gc.collect()
             torch.cuda.empty_cache()
@@ -165,7 +178,7 @@ if __name__ == '__main__':
         dataset = ShopeeDataset(val_df, cfg_img, transforms)
         dataloader = torch.utils.data.DataLoader(dataset, batch_size = 32)
         # initiate matching engine
-        matching_engine = Matching(dataloader, cfg_img, cfg_text)
+        matching_engine = Matching(dataloader=dataloader, cfg_img=cfg_img, cfg_text=cfg_text)
         # search best threshold
         thresholds = list(np.arange(0.8,1,0.02))
         matching_engine.match_cv(val_df, thresholds)
