@@ -53,7 +53,7 @@ To make matching prediction on test data:  ```python inference.py --model_type i
 
 ## 5. Result
 
-| Validation f1-score | 0.8996 |
-|---                  |---     |
-| Public f1-score     |        |
+| Validation f1-score | Public f1-score |
+|---                  |---              |
+| 0.8996              |                 |
 
