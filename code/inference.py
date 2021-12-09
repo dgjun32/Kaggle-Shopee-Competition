@@ -57,7 +57,7 @@ class Matching:
 
     def _compute_representations(self):
         print('Start Computing Embeddings')
-        if self.mode == 'mult':
+        if self.mode == 'multi':
             img_reps, text_reps = [], []
             self.img_model.cuda()
             self.text_model.cuda()
@@ -180,7 +180,7 @@ if __name__ == '__main__':
         # initiate matching engine
         matching_engine = Matching(dataloader=dataloader, cfg_img=cfg_img, cfg_text=cfg_text)
         # search best threshold
-        thresholds = list(np.arange(0.8,1,0.02))
+        thresholds = list(np.arange(0.8,1,0.01))
         matching_engine.match_cv(val_df, thresholds)
     else:
         dataset = ShopeeDataset(test_df, cfg_img, transforms)
